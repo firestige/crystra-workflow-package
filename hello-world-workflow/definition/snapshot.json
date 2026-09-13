@@ -6,7 +6,7 @@
     "package": {
       "name": "hello-world-workflow",
       "version": "0.2.0",
-      "digest": "sha256:ed8fb7a19bc2360d707e067a9425205683208d7ce2d7f8d498386d16fdd05a27"
+      "digest": "sha256:21a50f1ef2a47307fe4fe1e13bbda02ee71112c0631209c1d03ce1ab40465683"
     },
     "definition": {
       "id": "hello-world-workflow",
@@ -135,6 +135,6 @@
       "noAmbientFallback": true,
       "allBindingsExact": true
     },
-    "digest": "sha256:5825f2a4d009b826f1023a9ca8504c59bf6a597313d81c114abca5183efc65aa"
+    "digest": "sha256:d270535dcc2bfaec93db3ed6e3cb42306694e9dcac92008e2b50e0dbdeb26524"
   }
 }

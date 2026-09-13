@@ -16,7 +16,7 @@
       "version": "0.4.10",
       "contentIdentity": "sha256:63c9cd760c577780f88a7fc28ac943002cb92ceaff0b700f5d9994b76311e1f8"
     },
-    "digest": "sha256:85f2ab154ca8dde9b5c9e2b72482af73eba0886ae9a5ea6236cfce6e56b871cf"
+    "digest": "sha256:d8a2c440ce7dd6a49d0749cc1fd51c438610d6a4955abc9ba46c914dc203f230"
   },
   "documents": {
     "workflow": "workflow.json",
@@ -507,7 +507,7 @@
         "kind": "driver",
         "owner": "referenced",
         "sourceLocator": {
-          "repository": "workflow-self-recursive",
+          "repository": "crystra",
           "path": "bindings/managed-cli-driver.yaml"
         },
         "contentIdentity": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
@@ -518,7 +518,7 @@
         "kind": "tool",
         "owner": "referenced",
         "sourceLocator": {
-          "repository": "workflow-self-recursive",
+          "repository": "crystra",
           "path": "tools/repo-read.yaml"
         },
         "contentIdentity": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",

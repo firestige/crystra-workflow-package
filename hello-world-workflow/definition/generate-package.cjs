@@ -42,7 +42,7 @@ const documents = {
 const resources = {
   owned,
   referenced: [
-    referenced("resource.driver.provider", "driver", "workflow-self-recursive", "bindings/agent-provider-driver.yaml", "c", "Execution projects the frozen Role Provider binding"),
+    referenced("resource.driver.provider", "driver", "crystra", "bindings/agent-provider-driver.yaml", "c", "Execution projects the frozen Role Provider binding"),
   ],
 };
 const pkg = {

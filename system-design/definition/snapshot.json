@@ -6,7 +6,7 @@
     "package": {
       "name": "system-design-workflow",
       "version": "0.4.10",
-      "digest": "sha256:85f2ab154ca8dde9b5c9e2b72482af73eba0886ae9a5ea6236cfce6e56b871cf"
+      "digest": "sha256:d8a2c440ce7dd6a49d0749cc1fd51c438610d6a4955abc9ba46c914dc203f230"
     },
     "definition": {
       "id": "system-design-workflow",
@@ -624,6 +624,6 @@
       "noAmbientFallback": true,
       "allBindingsExact": true
     },
-    "digest": "sha256:2ca3d383e41cd68917878bcea098a81b13b4b4dfd7808a00804448101b7c6a64"
+    "digest": "sha256:336e72539d552d3ab5b17c09f602110d614dd57b2787a418574b23e730f3f4e0"
   }
 }

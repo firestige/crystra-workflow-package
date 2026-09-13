@@ -1,8 +1,8 @@
-# workflow-package
+# Crystra Workflow Packages
 
 English | [中文](README.zh-CN.md)
 
-workflow-package holds the versioned Workflow Packages that workflow-self-recursive executes. Each package is an owner-declared, versioned closure of a Workflow Definition together with its Actions, Role routes, Prompts, Skills, models, tools, Drivers, schemas, validators, and conformance resources. It is a repository workstream — the home of the Workflow definitions and resources — not one of the two product systems.
+workflow-package holds the versioned Workflow Packages that Crystra executes. Each package is an owner-declared, versioned closure of a Workflow Definition together with its Actions, Role routes, Prompts, Skills, models, tools, Drivers, schemas, validators, and conformance resources. It is a repository workstream — the home of the Workflow definitions and resources — not one of the two product systems.
 
 The repository ships independently versioned logical Workflows:
 
@@ -12,11 +12,11 @@ The repository ships independently versioned logical Workflows:
 
 ## Developer preview
 
-This repository is part of workflow-self-recursive's architecture-first developer preview for trusted local use by individuals and small teams. Packages are validated against the exact frozen Workflow Contract used by their release. Hello World 0.2.0, Implementation 0.4.2, and System Design 0.4.2 use Runtime DSL 2.0. **THERE WILL BE COMPATIBILITY-BREAKING CHANGES.**
+This repository is part of Crystra's architecture-first developer preview for trusted local use by individuals and small teams. Packages are validated against the exact frozen Workflow Contract used by their release. Hello World 0.2.0, Implementation 0.4.12, and System Design 0.4.10 use Runtime DSL 2.0. **THERE WILL BE COMPATIBILITY-BREAKING CHANGES.**
 
 ## Structure
 
-Each package keeps four concerns independently locatable, following the [Workflow composition model](https://github.com/firestige/workflow-self-recursive/blob/main/docs/workflow-composition-model.md):
+Each package keeps four concerns independently locatable, following the [Workflow composition model](https://github.com/firestige/crystra/blob/main/docs/workflow-composition-model.md):
 
 - a package index (`README.md`);
 - a Workflow Definition (`workflow.md`) as the single source of flow semantics;
@@ -25,7 +25,7 @@ Each package keeps four concerns independently locatable, following the [Workflo
 
 ## Install a Workflow Package
 
-Product users select a Workflow with `name`, `name@latest`, or exact `name@version`. Execution resolves a bare name or `@latest` through its sticky-local alias and its single configured Source, then freezes the selected exact `name@version`, digest, and local path into the Delivery. It downloads immutable public GitHub Releases at `workflow-package/<name>/v<version>` from `firestige/wsr-workflow-package`, verifies their descriptor, checksum, provenance, compatible Contract revision, Package closure, Workflow schema, and Snapshot identities, then admits them to the exact-content cache. No repository clone or repository development dependency is required.
+Product users select a Workflow with `name`, `name@latest`, or exact `name@version`. Execution resolves a bare name or `@latest` through its sticky-local alias and its single configured Source, then freezes the selected exact `name@version`, digest, and local path into the Delivery. It downloads immutable public GitHub Releases at `workflow-package/<name>/v<version>` from `firestige/crystra-workflow-package`, verifies their descriptor, checksum, provenance, compatible Contract revision, Package closure, Workflow schema, and Snapshot identities, then admits them to the exact-content cache. No repository clone or repository development dependency is required.
 
 Repository cloning remains a contributor workflow only; it is never a runtime fallback. `latest` is a controlled package selector, not a tag, branch, ambient-checkout, or local-source fallback.
 
@@ -34,9 +34,11 @@ Repository cloning remains a contributor workflow only; it is never a runtime fa
 - [Implementation Workflow Package](implementation/README.md)
 - [System Design Workflow Package](system-design/README.md)
 - [Hello World Workflow Package](hello-world-workflow/README.md)
-- [Workflow composition model](https://github.com/firestige/workflow-self-recursive/blob/main/docs/workflow-composition-model.md)
-- [Conceptual architecture](https://github.com/firestige/workflow-self-recursive/blob/main/docs/agent-architecture.md)
+- [Workflow composition model](https://github.com/firestige/crystra/blob/main/docs/workflow-composition-model.md)
+- [Conceptual architecture](https://github.com/firestige/crystra/blob/main/docs/agent-architecture.md)
 
 ## License
 
 [Apache-2.0](LICENSE)
+
+Development validation uses the exact independent Contracts input in `config/development-contract.json`. Crystra releases are not published yet; the final external coordinates and release tag namespace are switched together during the rename cutover.

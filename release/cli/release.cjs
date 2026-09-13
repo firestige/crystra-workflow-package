@@ -17,7 +17,7 @@ class ReleaseError extends Error {}
 function assertConfiguration(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)
     || Object.keys(value).sort().join(",") !== [...CONFIG_KEYS].sort().join(",")
-    || value.schemaVersion !== "wsr.release-component@1.0.0"
+    || value.schemaVersion !== "crystra.release-component@1.0.0"
     || value.releaseBranch !== "main" || !/^release\/[a-z0-9._-]+$/.test(value.triggerBranch)
     || value.stablePolicy !== "qualified-candidate-exact-assets"
     || !Array.isArray(value.capabilities) || value.capabilities.length === 0
@@ -46,7 +46,7 @@ function sha256(bytes) {
 async function files(directory, prefix = "") {
   const result = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
-    if ([".git", "node_modules"].includes(entry.name)) continue;
+    if ([".git", "node_modules", ".DS_Store", ".gitignore"].includes(entry.name)) continue;
     const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
     const absolute = path.join(directory, entry.name);
     if (entry.isDirectory()) result.push(...await files(absolute, relative));
@@ -130,8 +130,8 @@ async function buildWorkflowAssets(repository, destination, revision, contractRe
     const provenance = {
       schemaVersion: "workflow-package.provenance@1.0.0",
       subject: { name: archiveName, sha256: archiveDigest },
-      source: { repository: "firestige/wsr-workflow-package", revision },
-      contract: { repository: "firestige/wsr-contracts", revision: contractRevision },
+      source: { repository: "firestige/crystra-workflow-package", revision },
+      contract: { repository: "firestige/crystra-contracts", revision: contractRevision },
       builder: { workflow: ".github/workflows/release-candidate.yml" },
     };
     const provenanceBytes = Buffer.from(`${JSON.stringify(provenance, null, 2)}\n`);
@@ -143,7 +143,7 @@ async function buildWorkflowAssets(repository, destination, revision, contractRe
       checksum: { name: checksumName },
       provenance: { name: provenanceName, sha256: sha256(provenanceBytes) },
       contract: {
-        repository: "firestige/wsr-contracts", revision: contractRevision,
+        repository: "firestige/crystra-contracts", revision: contractRevision,
         minVersion: packageDocument.compatibility.minContractVersion,
         maxVersion: packageDocument.compatibility.maxContractVersion,
       },
@@ -168,10 +168,10 @@ async function buildWorkflowAssets(repository, destination, revision, contractRe
     });
   }
   const manifest = {
-    schemaVersion: "wsr.workflow-assets-release@2.0.0",
-    repository: "firestige/wsr-workflow-package",
+    schemaVersion: "crystra.workflow-assets-release@2.0.0",
+    repository: "firestige/crystra-workflow-package",
     revision,
-    contract: { repository: "firestige/wsr-contracts", revision: contractRevision },
+    contract: { repository: "firestige/crystra-contracts", revision: contractRevision },
     packages,
   };
   await writeFile(path.join(destination, "release-metadata.json"), `${JSON.stringify(manifest, null, 2)}\n`);
@@ -182,10 +182,10 @@ async function verifyWorkflowAssets(destination) {
   let manifest;
   try { manifest = JSON.parse(await readFile(path.join(destination, "release-metadata.json"))); }
   catch (error) { throw new ReleaseError("RELEASE_METADATA_INVALID", { cause: error }); }
-  if (manifest.schemaVersion !== "wsr.workflow-assets-release@2.0.0"
-    || manifest.repository !== "firestige/wsr-workflow-package"
+  if (manifest.schemaVersion !== "crystra.workflow-assets-release@2.0.0"
+    || manifest.repository !== "firestige/crystra-workflow-package"
     || !/^[a-f0-9]{40}$/.test(manifest.revision)
-    || manifest.contract?.repository !== "firestige/wsr-contracts"
+    || manifest.contract?.repository !== "firestige/crystra-contracts"
     || !/^[a-f0-9]{40}$/.test(manifest.contract?.revision)
     || !Array.isArray(manifest.packages) || manifest.packages.length !== PACKAGE_DIRECTORIES.length) {
     throw new ReleaseError("RELEASE_METADATA_INVALID");

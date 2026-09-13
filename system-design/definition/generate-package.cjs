@@ -106,9 +106,9 @@ const owned = [
 
 // ---- referenced resources: [id, kind, repository, path, identityPattern, use] ----
 const referenced = [
-  ['resource.driver.managed-cli', 'driver', 'workflow-self-recursive', 'bindings/managed-cli-driver.yaml', 'e',
+  ['resource.driver.managed-cli', 'driver', 'crystra', 'bindings/managed-cli-driver.yaml', 'e',
     'Managed CLI Driver projecting the frozen route, never ambient defaults; exact identity resolved by the future Package Snapshot (placeholder, do not fabricate)'],
-  ['resource.tool.repo-read', 'tool', 'workflow-self-recursive', 'tools/repo-read.yaml', 'f',
+  ['resource.tool.repo-read', 'tool', 'crystra', 'tools/repo-read.yaml', 'f',
     'Repository/authorized-source read tool for routes that read repository evidence; exact identity resolved by the future Package Snapshot (placeholder, do not fabricate)'],
   ['budget.evaluator.questions', 'cli', 'system-design-workflow', 'scripts/budget/questions.mjs', 'a',
     'Declared evaluator registration point for budget.questions; implementation is outside this Definition'],

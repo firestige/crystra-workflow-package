@@ -1,5 +1,5 @@
 const assert = require("node:assert/strict");
-const { mkdir, mkdtemp, readFile, writeFile } = require("node:fs/promises");
+const { cp, mkdir, mkdtemp, readFile, writeFile } = require("node:fs/promises");
 const { tmpdir } = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
@@ -63,7 +63,7 @@ test("workflow asset builder is deterministic and digest verified", async () => 
     const descriptor = JSON.parse(await readFile(path.join(first, item.assets.find((asset) => asset.kind === "descriptor").name)));
     assert.equal(descriptor.schemaVersion, "workflow-package.package-release@2.0.0");
     assert.deepEqual(descriptor.contract, {
-      repository: "firestige/wsr-contracts",
+      repository: "firestige/crystra-contracts",
       revision: contractRevision,
       minVersion: "2.0.0",
       maxVersion: "2.0.0",
@@ -105,7 +105,7 @@ test("only stable publish receives the release App token", async () => {
   const promote = await readFile(path.join(root, ".github/workflows/release-promote.yml"), "utf8");
   const ci = await readFile(path.join(root, ".github/workflows/ci.yml"), "utf8");
   const releaseCli = await readFile(path.join(root, "release/cli/release.cjs"), "utf8");
-  assert.equal(candidate.includes("WSR_RELEASE_APP_PRIVATE_KEY"), false);
+  assert.equal(candidate.includes("CRYSTRA_RELEASE_APP_PRIVATE_KEY"), false);
   assert.ok(candidate.includes("push:"));
   assert.equal(candidate.includes("workflow_dispatch:"), false);
   assert.equal(candidate.includes("workflow_call:"), false);
@@ -114,11 +114,11 @@ test("only stable publish receives the release App token", async () => {
   assert.ok(candidate.includes("ref: ${{ steps.request.outputs.contract_ref }}"));
   assert.equal(candidate.includes("ref: main"), false);
   assert.ok(promote.includes("actions/create-github-app-token@v3"));
-  assert.ok(promote.includes("client-id: ${{ vars.WSR_RELEASE_CLIENT_ID }}"));
+  assert.ok(promote.includes("client-id: ${{ vars.CRYSTRA_RELEASE_CLIENT_ID }}"));
   assert.equal(promote.includes("app-id:"), false);
   assert.ok(promote.includes('gh release view "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY"'));
   assert.ok(promote.includes("GH_TOKEN: ${{ steps.release-app-token.outputs.token }}"));
-  assert.ok(promote.includes("repositories: wsr-workflow-package"));
+  assert.ok(promote.includes("repositories: crystra-workflow-package"));
   assert.ok(promote.includes("permission-contents: write"));
   assert.ok(candidate.includes('release.cjs qualify "$RUNNER_TEMP/remote-release"'));
   assert.ok(promote.includes('release.cjs qualify "$RUNNER_TEMP/qualified-release" "$RUNNER_TEMP/system-contracts"'));
@@ -138,4 +138,18 @@ test("only stable publish receives the release App token", async () => {
   assert.equal(promote.includes('test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG"'), false);
   assert.ok(promote.includes('gh release create "$TAG"'));
   assert.equal(promote.includes("inputs.final_tag"), false);
+});
+
+
+test("workflow archives exclude local filesystem noise", async () => {
+  const source = await mkdtemp(path.join(tmpdir(), "crystra-workflow-source-"));
+  for (const directory of ["hello-world-workflow", "implementation", "system-design"]) {
+    await cp(path.join(root, directory), path.join(source, directory), { recursive: true, filter: (p) => !p.includes("node_modules") });
+  }
+  const before = await mkdtemp(path.join(tmpdir(), "crystra-workflow-before-"));
+  const after = await mkdtemp(path.join(tmpdir(), "crystra-workflow-after-"));
+  await buildWorkflowAssets(source, before, "a".repeat(40), "b".repeat(40));
+  await writeFile(path.join(source, "implementation/.DS_Store"), "local noise");
+  await buildWorkflowAssets(source, after, "a".repeat(40), "b".repeat(40));
+  assert.deepEqual(await readFile(path.join(before, "release-metadata.json")), await readFile(path.join(after, "release-metadata.json")));
 });

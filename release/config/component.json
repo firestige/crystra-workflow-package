@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "wsr.release-component@1.0.0",
-  "repository": "firestige/wsr-workflow-package",
+  "schemaVersion": "crystra.release-component@1.0.0",
+  "repository": "firestige/crystra-workflow-package",
   "releaseBranch": "main",
   "triggerBranch": "release/next",
   "assetMode": "workflow-assets",

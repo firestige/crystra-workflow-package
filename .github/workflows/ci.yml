@@ -1,57 +1,47 @@
-name: CI
+name: Crystra Workflow CI
 
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: workflow-package-${{ github.workflow }}-${{ github.ref }}
+  group: crystra-workflow-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout canonical documentation authority
+      - uses: actions/checkout@v6
+      - name: Read exact contract input
+        id: contracts
+        run: |
+          echo "repository=$(jq -er .repository config/development-contract.json)" >> "$GITHUB_OUTPUT"
+          echo "revision=$(jq -er .revision config/development-contract.json)" >> "$GITHUB_OUTPUT"
+      - name: Check out exact Workflow Contract
         uses: actions/checkout@v6
         with:
-          repository: firestige/workflow-self-recursive
-          ref: bc7e46e90d8643bd9e4b4890fc93851494204de1
-
-      - name: Checkout workflow-package
-        uses: actions/checkout@v6
-        with:
-          path: workflow-package
-
-      - name: Checkout frozen Workflow Contract
-        uses: actions/checkout@v6
-        with:
-          repository: firestige/wsr-contracts
-          ref: 352f5c771ff0abd11acb80c58dc7ea528a729dca
-          path: system-contracts
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
+          repository: ${{ steps.contracts.outputs.repository }}
+          ref: ${{ steps.contracts.outputs.revision }}
+          path: .crystra-inputs/contracts
+      - uses: actions/setup-node@v7
         with:
           node-version: 24.12.0
-          cache: npm
-          cache-dependency-path: system-contracts/workflow-dsl-2-candidate/package-lock.json
-
       - name: Install Workflow Contract dependencies
-        run: npm --prefix system-contracts/workflow-dsl-2-candidate ci
-
-      - name: Qualify first-party Packages
+        run: npm --prefix .crystra-inputs/contracts/workflow-dsl-2-candidate ci --ignore-scripts
+      - name: Qualify first-party packages and release tools
         run: |
-          node system-contracts/workflow-dsl-2-candidate/generated/tools/check-example.cjs workflow-package/hello-world-workflow/definition
-          node system-contracts/workflow-dsl-2-candidate/generated/tools/check-example.cjs workflow-package/system-design/definition
-          node system-contracts/workflow-dsl-2-candidate/generated/tools/check-example.cjs workflow-package/implementation/definition
-          node --test workflow-package/test/tooling/dsl2-first-party-migration.test.cjs
-
+          node .crystra-inputs/contracts/workflow-dsl-2-candidate/generated/tools/check-example.cjs hello-world-workflow/definition
+          node .crystra-inputs/contracts/workflow-dsl-2-candidate/generated/tools/check-example.cjs system-design/definition
+          node .crystra-inputs/contracts/workflow-dsl-2-candidate/generated/tools/check-example.cjs implementation/definition
+          node --test test/tooling/dsl2-first-party-migration.test.cjs test/tooling/release/release.test.cjs
       - name: Run Implementation CLI suite
-        working-directory: workflow-package/implementation/cli
+        working-directory: implementation/cli
         run: |
           npm test
           npm run check

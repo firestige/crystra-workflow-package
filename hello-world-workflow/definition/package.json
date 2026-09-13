@@ -16,7 +16,7 @@
       "version": "0.2.0",
       "contentIdentity": "sha256:d0604cdf67bee4d863b9fde24a2a57b91004c69326bc0679ecb0ce2542b1e13a"
     },
-    "digest": "sha256:ed8fb7a19bc2360d707e067a9425205683208d7ce2d7f8d498386d16fdd05a27"
+    "digest": "sha256:21a50f1ef2a47307fe4fe1e13bbda02ee71112c0631209c1d03ce1ab40465683"
   },
   "documents": {
     "workflow": "workflow.json",
@@ -83,7 +83,7 @@
         "kind": "driver",
         "owner": "referenced",
         "sourceLocator": {
-          "repository": "workflow-self-recursive",
+          "repository": "crystra",
           "path": "bindings/agent-provider-driver.yaml"
         },
         "contentIdentity": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",

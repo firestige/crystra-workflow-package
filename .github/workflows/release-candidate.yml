@@ -22,6 +22,7 @@ jobs:
         run: |
           CANDIDATE_TAG="$(jq -er .candidate_tag release/request.json)"
           CONTRACT_REF="$(jq -er .contract_ref release/request.json)"
+          echo "$CANDIDATE_TAG" | grep -Eq '^crystra-workflow-package-v[0-9]+\.[0-9]+\.[0-9]+-rc\.[1-9][0-9]*$'
           echo "$CONTRACT_REF" | grep -Eq '^[0-9a-f]{40}$'
           echo "candidate_tag=$CANDIDATE_TAG" >> "$GITHUB_OUTPUT"
           echo "contract_ref=$CONTRACT_REF" >> "$GITHUB_OUTPUT"
@@ -48,6 +49,9 @@ jobs:
           node system-contracts/workflow-dsl-2-candidate/generated/tools/check-example.cjs system-design/definition
           node --test test/tooling/dsl2-first-party-migration.test.cjs
           node --test test/tooling/release/release.test.cjs
+          npm --prefix implementation/cli test
+          npm --prefix implementation/cli run check
+          git diff --exit-code HEAD
       - name: Build and verify exact assets
         env:
           CONTRACT_REF: ${{ steps.request.outputs.contract_ref }}
@@ -59,11 +63,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           CANDIDATE_TAG: ${{ steps.request.outputs.candidate_tag }}
         run: |
-          ! gh release view "$CANDIDATE_TAG"
+          ! gh release view "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY"
           ! git ls-remote --exit-code --tags origin "refs/tags/$CANDIDATE_TAG"
-          gh release create "$CANDIDATE_TAG" "$RUNNER_TEMP/local-release/"* --prerelease --target "$GITHUB_SHA"
+          gh release create "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" "$RUNNER_TEMP/local-release/"* --prerelease --target "$GITHUB_SHA"
           mkdir "$RUNNER_TEMP/remote-release"
-          gh release download "$CANDIDATE_TAG" --dir "$RUNNER_TEMP/remote-release"
+          gh release download "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" --dir "$RUNNER_TEMP/remote-release"
           node release/cli/release.cjs qualify "$RUNNER_TEMP/remote-release" system-contracts
           cmp "$RUNNER_TEMP/local-release/release-metadata.json" "$RUNNER_TEMP/remote-release/release-metadata.json"
       - name: Attach qualification evidence
@@ -72,5 +76,5 @@ jobs:
           CANDIDATE_TAG: ${{ steps.request.outputs.candidate_tag }}
         run: |
           export CANDIDATE_TAG
-          node -e 'const fs=require("node:fs"),crypto=require("node:crypto"),path=require("node:path"); const p=process.env.RUNNER_TEMP,m=fs.readFileSync(path.join(p,"remote-release/release-metadata.json")); fs.writeFileSync(path.join(p,"release-qualification.json"),JSON.stringify({schemaVersion:"wsr.release-qualification@1.0.0",candidateTag:process.env.CANDIDATE_TAG,commit:process.env.GITHUB_SHA,artifactMetadataSha256:"sha256:"+crypto.createHash("sha256").update(m).digest("hex"),localAcceptance:{status:"PASS"},remoteQualification:{status:"PASS"}},null,2)+"\n")'
-          gh release upload "$CANDIDATE_TAG" "$RUNNER_TEMP/release-qualification.json"
+          node -e 'const fs=require("node:fs"),crypto=require("node:crypto"),path=require("node:path"); const p=process.env.RUNNER_TEMP,m=fs.readFileSync(path.join(p,"remote-release/release-metadata.json")); fs.writeFileSync(path.join(p,"release-qualification.json"),JSON.stringify({schemaVersion:"crystra.release-qualification@1.0.0",candidateTag:process.env.CANDIDATE_TAG,commit:process.env.GITHUB_SHA,artifactMetadataSha256:"sha256:"+crypto.createHash("sha256").update(m).digest("hex"),localAcceptance:{status:"PASS"},remoteQualification:{status:"PASS"}},null,2)+"\n")'
+          gh release upload "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" "$RUNNER_TEMP/release-qualification.json"
