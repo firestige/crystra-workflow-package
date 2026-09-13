@@ -32,7 +32,7 @@ jobs:
       - name: Check out frozen Workflow Contract
         uses: actions/checkout@v6
         with:
-          repository: firestige/wsr-contracts
+          repository: firestige/crystra-contracts
           ref: ${{ steps.request.outputs.contract_ref }}
           path: system-contracts
       - name: Verify exact Workflow Contract revision

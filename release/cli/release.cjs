@@ -126,7 +126,7 @@ async function buildWorkflowAssets(repository, destination, revision, contractRe
     const checksumName = `${archiveName}.sha256`;
     const provenanceName = `workflow-package-${identity.name}-${identity.version}.provenance.json`;
     const archiveDigest = sha256(bytes);
-    const tag = `workflow-package/${identity.name}/v${identity.version}`;
+    const tag = `crystra-workflow-package/${identity.name}/v${identity.version}`;
     const provenance = {
       schemaVersion: "workflow-package.provenance@1.0.0",
       subject: { name: archiveName, sha256: archiveDigest },
